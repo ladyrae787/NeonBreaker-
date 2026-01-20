@@ -1,309 +1,329 @@
-# Brick Breaker - Android Game
+# Brick Breaker - HTML5 Mobile Game
 
-A modern brick breaker game reimagined for touch screens with slingshot-style controls. Built with Unity 2021.3.0f1 for Android.
+A modern brick breaker game built with HTML5/JavaScript and Phaser.js, optimized for mobile touchscreens. **Can be developed entirely from your phone!**
 
 ## Features
 
-- **Slingshot Touch Controls**: Intuitive drag-to-aim mechanic optimized for mobile
-- **Progressive Difficulty**: Brick health increases with each level and row
-- **Cumulative Ball System**: Collect balls that persist across rounds
-- **Scoring System**: Points based on brick values and level progression
-- **High Score Leaderboard**: Local persistence of top 10 scores
-- **Monetization**:
-  - Banner ads
-  - Interstitial ads (every 3 levels)
-  - Rewarded video ads (continue after game over)
-  - In-app purchases (remove ads, extra balls)
-- **Minimalist Design**: Clean, flat UI with smooth animations
-- **Sound & Haptics**: Audio feedback and vibration for actions
-- **Game Over Logic**: Continue with rewarded ads or restart
+- **Slingshot Touch Controls**: Intuitive drag-to-aim mechanic with visual trajectory
+- **Progressive Difficulty**: Brick health increases with level and row position
+- **Cumulative Ball System**: Collect balls that persist and grow with each level
+- **Scoring & Leaderboard**: Points system with local high score tracking (top 10)
+- **Full Monetization**:
+  - AdMob integration (banner, interstitial, rewarded video)
+  - In-app purchases ready (via Capacitor)
+- **Minimalist Design**: Clean, flat UI optimized for mobile
+- **Sound & Haptics**: Web Audio API tones + Vibration API
+- **Offline Play**: Works without internet (ads require connection)
+- **Responsive**: Adapts to any screen size
 
-## Project Structure
+## 🚀 Quick Start (Test in Browser)
 
-```
-Assets/
-├── Scenes/
-│   └── MainGame.unity          # Main game scene
-├── Scripts/
-│   ├── GameManager.cs          # Core game logic and state management
-│   ├── SlingshotController.cs  # Touch controls and ball launching
-│   ├── Ball.cs                 # Ball physics and collision
-│   ├── Brick.cs                # Brick behavior and health
-│   ├── BrickManager.cs         # Brick spawning and grid management
-│   ├── AdManager.cs            # Unity Ads integration
-│   ├── IAPManager.cs           # In-app purchases
-│   ├── LeaderboardManager.cs   # High score tracking
-│   ├── SoundManager.cs         # Audio and haptics
-│   └── UIManager.cs            # UI panels and transitions
-├── Prefabs/                    # Game object prefabs (to be created in Unity)
-├── Materials/                  # Materials for game objects
-├── UI/                         # UI sprites and assets
-└── Plugins/
-    └── Android/
-        └── AndroidManifest.xml # Android configuration
+### Option 1: Simple Python Server (No Installation)
 
-ProjectSettings/
-├── ProjectVersion.txt          # Unity version info
-└── ProjectSettings.asset       # Project configuration (created in Unity Editor)
-
-Packages/
-└── manifest.json               # Package dependencies
-```
-
-## Prerequisites
-
-- Unity 2021.3.0f1 or later
-- Android SDK (API Level 21 minimum, target 33)
-- JDK 8 or 11
-- Unity Ads account and Game ID
-- Google Play Console account (for publishing)
-
-## Setup Instructions
-
-### 1. Open Project in Unity
-
-1. Open Unity Hub
-2. Click "Add" and select this project folder
-3. Ensure Unity version 2021.3.0f1 is installed
-4. Open the project
-
-### 2. Configure Unity Ads
-
-1. Go to Window > General > Services
-2. Create a Unity Project ID or link existing
-3. Enable Unity Ads
-4. Get your Game IDs for Android/iOS
-5. Open `Assets/Scripts/AdManager.cs`
-6. Replace `YOUR_ANDROID_GAME_ID` with your actual Game ID
-7. Update ad unit IDs if using custom placements
-
-### 3. Configure In-App Purchases
-
-1. Create products in Google Play Console
-2. Open `Assets/Scripts/IAPManager.cs`
-3. Update product IDs to match your Play Console products
-4. Test with Google Play's testing track
-
-### 4. Setup Android Build
-
-1. Go to File > Build Settings
-2. Select Android platform
-3. Click "Switch Platform"
-4. Go to Player Settings
-5. Configure:
-   - **Company Name**: Your studio name
-   - **Product Name**: Brick Breaker
-   - **Package Name**: `com.yourstudio.brickbreaker` (must be unique)
-   - **Version**: 1.0
-   - **Bundle Version Code**: 1
-   - **Minimum API Level**: Android 5.1 (API 22)
-   - **Target API Level**: API 33
-   - **Scripting Backend**: IL2CPP
-   - **Target Architectures**: ARM64 (required for Play Store)
-
-### 5. Create Game Objects in Unity Editor
-
-Before building, you need to set up the scene in Unity Editor:
-
-#### Required Prefabs:
-1. **Ball Prefab**:
-   - Create a Circle sprite with CircleCollider2D and Rigidbody2D
-   - Attach `Ball.cs` script
-   - Add TrailRenderer for visual effect
-   - Tag as "Ball"
-
-2. **Brick Prefab**:
-   - Create a Quad sprite with BoxCollider2D
-   - Attach `Brick.cs` script
-   - Add Text component for health display
-   - Tag as "Brick"
-
-#### Main Scene Setup:
-1. Open `Assets/Scenes/MainGame.unity`
-2. Create game objects:
-   - **GameManager**: Empty GameObject with GameManager.cs
-   - **BrickManager**: Empty GameObject with BrickManager.cs
-   - **SlingshotController**: GameObject with SlingshotController.cs
-   - **AdManager**: GameObject with AdManager.cs
-   - **IAPManager**: GameObject with IAPManager.cs
-   - **SoundManager**: GameObject with SoundManager.cs
-   - **UIManager**: GameObject with UIManager.cs
-   - **LeaderboardManager**: GameObject with LeaderboardManager.cs
-
-3. Create UI Canvas:
-   - Add Canvas (Screen Space - Overlay)
-   - Add UI panels for: Main Menu, Gameplay HUD, Game Over, Settings, Shop, Leaderboard
-   - Link UI elements to UIManager script
-
-4. Create Game Boundaries:
-   - Add EdgeCollider2D or BoxCollider2D for walls (tag as "Wall")
-   - Add ground trigger at bottom (tag as "Ground")
-
-5. Wire up script references in Inspector
-
-### 6. Build for Android
-
-#### Development Build:
 ```bash
-# From Unity Editor:
-# File > Build Settings > Build
-# Select output folder
-# Wait for build to complete
+# From your phone terminal or GitHub Codespaces
+python3 -m http.server 8080
 ```
 
-#### Release Build (for Play Store):
-1. Go to Player Settings > Publishing Settings
-2. Create a new keystore:
-   - Click "Keystore Manager"
-   - "Keystore... > Create New"
-   - Fill in all details and remember the passwords
-3. Build Settings > Build App Bundle (AAB)
-4. This creates an .aab file for Play Store upload
+Then open in browser: `http://localhost:8080`
 
-### 7. Testing
+### Option 2: Live Preview (GitHub Codespaces)
 
-1. **Unity Editor**: Test basic gameplay
-2. **Development Build**: Install APK on device via ADB
-3. **Test Ads**: Enable test mode in AdManager
-4. **Test IAP**: Use Google Play Console test tracks
-5. **Performance**: Test on multiple Android devices
+1. Open repository in GitHub Codespaces
+2. Right-click `index.html` → "Open with Live Server"
+3. Game opens in browser automatically
 
-## Building for Google Play Store
+### Option 3: Direct File Open
 
-### Pre-launch Checklist:
+Simply open `index.html` in any modern web browser!
 
-- [ ] Update version code in Player Settings
-- [ ] Set release keystore in Publishing Settings
-- [ ] Disable ad test mode in AdManager.cs
-- [ ] Configure IAP product IDs
-- [ ] Replace `YOUR_ANDROID_GAME_ID` with real Unity Ads ID
-- [ ] Update package name if needed
-- [ ] Create app icon (512x512) and feature graphic
-- [ ] Test on multiple devices
-- [ ] Check crash logs and fix bugs
-- [ ] Verify GDPR compliance for ads
-- [ ] Add privacy policy URL
-- [ ] Build signed AAB (not APK)
+## 📱 Development from Your Phone
 
-### Build Command:
+### Using GitHub Codespaces (Recommended)
+
+1. **Open repository on GitHub** (on your phone)
+2. Tap the **Code** button → **Codespaces** tab
+3. Tap **"Create codespace on main"**
+4. Wait for environment to load (~30 seconds)
+5. **Edit any file** directly in the browser!
+6. **Test changes**: Run `python3 -m http.server 8080` in terminal
+7. Open preview in browser
+
+**Files you can edit:**
+- `src/config.js` - Game settings (ball speed, colors, difficulty)
+- `src/scenes/GameScene.js` - Core gameplay mechanics
+- `src/scenes/MainMenuScene.js` - Menu and UI
+- `index.html` - Layout and styling
+
+### Using Mobile Code Editors
+
+**Spck Editor** (Android):
+- Install from Play Store (free)
+- Clone this repository
+- Edit JavaScript files
+- Run local server to test
+
+**Code Editor** (iOS):
+- Install from App Store
+- Clone repository via Git
+- Edit files
+- Preview changes
+
+## 🎮 How to Play
+
+1. **Aim**: Drag from the launch point to aim
+2. **Release**: Let go to fire all balls
+3. **Break Bricks**: Each brick shows its health number
+4. **Collect Balls**: Complete levels to earn more balls
+5. **Progress**: Clear all bricks to advance
+
+## 🛠️ Project Structure
+
+```
+brick-breaker/
+├── index.html                  # Main HTML file
+├── package.json                # npm dependencies
+├── capacitor.config.json       # Android build config
+├── src/
+│   ├── config.js               # Game configuration
+│   ├── game.js                 # Phaser initialization
+│   ├── managers/
+│   │   ├── AdManager.js        # AdMob integration
+│   │   ├── SoundManager.js     # Audio & haptics
+│   │   └── StorageManager.js   # LocalStorage (saves/leaderboard)
+│   └── scenes/
+│       ├── BootScene.js        # Loading & initialization
+│       ├── MainMenuScene.js    # Main menu
+│       ├── GameScene.js        # Core gameplay
+│       └── GameOverScene.js    # Game over screen
+├── assets/                     # (Optional) Images & sounds
+├── ralph-wiggum/               # AI development loop plugin
+└── README.md                   # This file
+```
+
+## 📦 Building for Android
+
+### Prerequisites
+
+- Node.js 16+ (on desktop or cloud)
+- Android Studio (for final build)
+- OR use GitHub Actions (automated)
+
+### Method 1: Manual Build (Desktop Required)
+
 ```bash
-# In Unity Editor:
-File > Build Settings > Android
-Build Type: App Bundle (AAB)
-Click "Build"
+# Install dependencies
+npm install
+
+# Install Capacitor
+npm install @capacitor/core @capacitor/cli @capacitor/android
+
+# Initialize Capacitor
+npx cap init
+
+# Add Android platform
+npx cap add android
+
+# Sync web files to Android
+npx cap sync
+
+# Open in Android Studio
+npx cap open android
+
+# In Android Studio:
+# - Build → Build Bundle(s) / APK(s) → Build APK(s)
+# - Or Build → Generate Signed Bundle for Play Store
 ```
 
-### Upload to Play Console:
+### Method 2: Cloud Build (No Desktop Needed!)
 
-1. Go to Google Play Console
-2. Create new app or select existing
-3. Navigate to Release > Production
-4. Create new release
-5. Upload the .aab file
-6. Fill in release notes
-7. Review and rollout
+**Using GitHub Actions:**
 
-## Troubleshooting
+1. Fork this repository
+2. Enable GitHub Actions
+3. Push changes to trigger build
+4. Download APK from Actions artifacts
 
-### Build Errors:
+*(GitHub Actions workflow file coming soon)*
 
-**"Unable to find Unity Ads package"**
-- Open Package Manager (Window > Package Manager)
-- Search for "Unity Ads" and install
+**Using Capacitor Cloud:**
 
-**"Gradle build failed"**
-- Update Android SDK in Unity preferences
-- Check JDK installation
-- Clear Gradle cache: `~/.gradle/caches`
+```bash
+npx @capacitor/cli cloud build android
+```
 
-**"Keystore not found"**
-- Recreate keystore in Player Settings > Publishing Settings
-- Ensure paths don't have spaces
+Builds in the cloud, downloads APK to your device!
 
-### Runtime Issues:
+## 🎨 Customization
 
-**Ads not showing**
-- Verify Game ID in AdManager.cs
+### Change Colors
+
+Edit `src/config.js`:
+
+```javascript
+brick: {
+    colors: [
+        0x4DB8FF, // Light Blue
+        0x66CC66, // Green - Change these!
+        0xFFCC33, // Yellow
+        // ... add more colors
+    ]
+}
+```
+
+### Adjust Difficulty
+
+```javascript
+ball: {
+    minSpeed: 400,  // Lower = slower
+    maxSpeed: 600,  // Lower = easier to control
+}
+```
+
+### Change Scoring
+
+```javascript
+scoring: {
+    baseScore: 10  // Higher = more points per brick
+}
+```
+
+## 💰 Monetization Setup
+
+### AdMob Integration
+
+1. Create AdMob account: [admob.google.com](https://admob.google.com)
+2. Create new app
+3. Copy ad unit IDs
+4. Replace in `src/config.js`:
+
+```javascript
+ads: {
+    bannerId: 'ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY',
+    interstitialId: 'ca-app-pub-XXXXXXXXXXXXXXXX/ZZZZZZZZZZ',
+    rewardedId: 'ca-app-pub-XXXXXXXXXXXXXXXX/WWWWWWWWWW',
+    testMode: false  // Set to false for production!
+}
+```
+
+### In-App Purchases
+
+Uses Capacitor's In-App Purchase plugin. Configure in Google Play Console after uploading APK.
+
+## 🧪 Testing
+
+### Test in Browser
+
+```bash
+python3 -m http.server 8080
+# or
+npm run serve
+```
+
+Open `http://localhost:8080` in Chrome DevTools mobile emulator.
+
+### Test on Android Device
+
+1. Build APK
+2. Install via ADB:
+   ```bash
+   adb install path/to/app-debug.apk
+   ```
+3. Or transfer APK to phone and install
+
+## 📋 Publishing to Google Play Store
+
+1. **Build signed AAB**:
+   - Android Studio → Build → Generate Signed Bundle
+   - Create keystore (save it securely!)
+   - Build release AAB
+
+2. **Prepare store listing**:
+   - App name: Brick Breaker
+   - Category: Games > Arcade
+   - Content rating: ESRB Everyone
+   - Screenshots (at least 2)
+   - Feature graphic (1024x500)
+   - App icon (512x512)
+
+3. **Upload to Play Console**:
+   - Create new app
+   - Upload AAB to internal testing first
+   - Test thoroughly
+   - Submit for review
+   - Rollout to production
+
+## 🐛 Troubleshooting
+
+### Game not loading in browser
+
+- Check browser console for errors (F12)
+- Ensure Phaser CDN is accessible
+- Try hard refresh (Ctrl+Shift+R)
+
+### Touch controls not working
+
+- Ensure `touch-action: none` in CSS
+- Test on actual device, not just desktop emulator
+- Check if pointer events are enabled
+
+### Ads not showing
+
+- Test mode: Uses test ad IDs (always show)
+- Production: Wait 24-48 hours for ad inventory
+- Verify AdMob account is active
 - Check internet connection
-- Enable test mode during development
-- Wait for ad inventory to fill (can take 24-48 hours)
 
-**IAP not working**
-- Verify product IDs match Play Console
-- Test with license testing account
-- Ensure app is published to internal/alpha track
-- Check billing permissions in manifest
+### APK build fails
 
-**Game lags on device**
-- Reduce physics timestep
-- Optimize collision detection
-- Reduce particle effects
-- Target 60 FPS with VSync off
+- Ensure Android SDK is installed
+- Check `capacitor.config.json` is valid
+- Run `npx cap sync` before building
+- Check Android Studio logs
 
-## Customization
+## 🎯 Performance Tips
 
-### Change Colors:
-- Edit `brickColors` array in BrickManager.cs
-- Modify camera background color in scene
+- Game targets 60 FPS
+- Uses hardware acceleration
+- Minimal DOM manipulation
+- Procedural graphics (no image files needed)
 
-### Adjust Difficulty:
-- Change brick health formula in Brick.cs `Initialize()`
-- Modify `maxLaunchForce` in SlingshotController.cs
-- Adjust ball speed in Ball.cs
+## 📜 License
 
-### Add Power-ups:
-- Create new PowerUp.cs script
-- Add PowerUpManager.cs
-- Spawn power-ups in BrickManager
+MIT License - Feel free to use for commercial projects!
 
-### Change Monetization:
-- Adjust ad frequency in GameManager.cs
-- Add/remove IAP products in IAPManager.cs
-- Modify pricing in Play Console
+## 🤝 Contributing
 
-## Assets Needed
+1. Fork the repository
+2. Create feature branch
+3. Make changes
+4. Test on multiple devices
+5. Submit pull request
 
-To complete the game, create these assets:
+## 🎓 Learning Resources
 
-### Graphics:
-- App icon (512x512 PNG)
-- Splash screen (1920x1080)
-- Ball sprite (circular, 128x128)
-- Brick sprite (rectangular, 256x128)
-- UI buttons and panels
-- Background gradient/texture
+- **Phaser 3**: [phaser.io/learn](https://phaser.io/learn)
+- **Capacitor**: [capacitorjs.com/docs](https://capacitorjs.com/docs)
+- **AdMob**: [admob.google.com/support](https://admob.google.com/support)
+- **Web Audio API**: [developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
 
-### Audio (optional):
-- Ball launch sound
-- Bounce sound
-- Brick break sound
-- Level complete jingle
-- Game over sound
-- Background music (loop)
-- UI button click
+## 📞 Support
 
-## License
+- **Report bugs**: Open GitHub issue
+- **Questions**: Check Discussions tab
+- **Updates**: Watch repository for releases
 
-This project is provided as-is for educational and commercial use.
+## 🚀 Next Steps
 
-## Support
+1. **Test the game**: Open `index.html` in browser
+2. **Customize**: Edit `src/config.js` with your preferences
+3. **Add AdMob**: Replace test IDs with real ones
+4. **Build APK**: Follow build instructions above
+5. **Publish**: Upload to Google Play Store
+6. **Profit**: Watch the downloads roll in! 💰
 
-For issues or questions:
-- Check Unity documentation: https://docs.unity3d.com
-- Unity Ads setup: https://docs.unity.com/ads
-- Google Play Console: https://support.google.com/googleplay/android-developer
+---
 
-## Next Steps
+**Made with ❤️ using HTML5, Phaser.js, and Capacitor**
 
-1. Open project in Unity 2021.3.0f1
-2. Set up scene with game objects and UI
-3. Create prefabs for Ball and Brick
-4. Configure Unity Ads and IAP
-5. Test gameplay in editor
-6. Build and test on Android device
-7. Optimize and polish
-8. Prepare store assets
-9. Build signed AAB
-10. Upload to Play Store
-
-Good luck with your game!
+**Star ⭐ this repo if you found it helpful!**
