@@ -113,7 +113,7 @@ class SoundManager {
     }
 
     setMusicVolume(volume) {
-        this.musicVolume = Math.max(0, Math.min(1, volume);
+        this.musicVolume = Math.max(0, Math.min(1, volume));
     }
 
     isEnabled() {
