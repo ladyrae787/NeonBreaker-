@@ -187,16 +187,9 @@ class GameScene extends Phaser.Scene {
     onPointerDown(pointer) {
         if (this.isLaunching || this.gameOver || this.activeBalls.length > 0) return;
 
-        // Check if near launch point
-        const dist = Phaser.Math.Distance.Between(
-            pointer.x, pointer.y,
-            this.launchPoint.x, this.launchPoint.y
-        );
-
-        if (dist < 100) {
-            this.isDragging = true;
-            this.dragStart = { x: pointer.x, y: pointer.y };
-        }
+        // Allow dragging from anywhere on screen
+        this.isDragging = true;
+        this.dragStart = { x: pointer.x, y: pointer.y };
     }
 
     onPointerMove(pointer) {
@@ -236,7 +229,6 @@ class GameScene extends Phaser.Scene {
 
     drawTrajectory(dragVector) {
         this.trajectoryGraphics.clear();
-        this.trajectoryGraphics.lineStyle(3, 0xffffff, 0.5);
 
         const velocity = {
             x: dragVector.x * 3,
@@ -250,20 +242,24 @@ class GameScene extends Phaser.Scene {
             velocity.y = (velocity.y / speed) * GameConfig.ball.maxSpeed;
         }
 
-        // Draw trajectory line
-        const points = [];
+        // Draw trajectory as dotted line
         let x = this.launchPoint.x;
         let y = this.launchPoint.y;
 
-        for (let i = 0; i < 20; i++) {
-            points.push({ x, y });
-            x += velocity.x * 0.05;
-            y += velocity.y * 0.05;
-        }
+        // Draw dots along trajectory path
+        for (let i = 0; i < 30; i++) {
+            // Draw a bright, visible circle for each dot
+            this.trajectoryGraphics.fillStyle(0xffffff, 0.8);
+            this.trajectoryGraphics.fillCircle(x, y, 4);
 
-        if (points.length > 1) {
-            const path = new Phaser.Curves.Spline(points);
-            path.draw(this.trajectoryGraphics, 32);
+            // Move to next dot position
+            x += velocity.x * 0.04;
+            y += velocity.y * 0.04;
+
+            // Stop if dot goes off screen
+            if (x < 0 || x > this.cameras.main.width || y < 0 || y > this.cameras.main.height) {
+                break;
+            }
         }
     }
 
