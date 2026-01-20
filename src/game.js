@@ -18,6 +18,9 @@ const config = {
             debug: false
         }
     },
+    input: {
+        activePointers: 3
+    },
     scene: [
         BootScene,
         MainMenuScene,
@@ -28,11 +31,6 @@ const config = {
 
 // Create game instance
 const game = new Phaser.Game(config);
-
-// Prevent default touch behaviors
-document.addEventListener('touchmove', function(e) {
-    e.preventDefault();
-}, { passive: false });
 
 // Prevent context menu on long press
 document.addEventListener('contextmenu', function(e) {
