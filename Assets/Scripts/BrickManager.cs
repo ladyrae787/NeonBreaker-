@@ -3,64 +3,156 @@ using System.Collections.Generic;
 
 public class BrickManager : MonoBehaviour
 {
+    [Header("Brick Settings")]
     public GameObject brickPrefab;
-    public int columns = 8;
-    public float rowHeight = 0.5f;
-    public float moveSpeed = 0.1f;
-    public float spawnY = 5f;
-    public float gameOverY = -5f;
+    public int columns = 7;
+    public int rowsPerLevel = 1;
+    public float brickWidth = 1.2f;
+    public float brickHeight = 0.6f;
+    public float spacing = 0.1f;
 
-    private List<GameObject> activeBricks = new List<GameObject>();
+    [Header("Grid Settings")]
+    public Vector2 gridStartPosition = new Vector2(-4f, 4f);
+    public float rowMoveDistance = 0.6f;
+    public int maxRows = 10;
 
-    void Start()
+    [Header("Colors")]
+    public Color[] brickColors = new Color[]
     {
-        SpawnRow();
+        new Color(0.3f, 0.7f, 1f),    // Light Blue
+        new Color(0.4f, 0.8f, 0.4f),  // Green
+        new Color(1f, 0.8f, 0.2f),    // Yellow
+        new Color(1f, 0.5f, 0.2f),    // Orange
+        new Color(1f, 0.3f, 0.3f),    // Red
+        new Color(0.8f, 0.3f, 0.8f)   // Purple
+    };
+
+    private List<Brick> activeBricks = new List<Brick>();
+    private int totalBricksInLevel;
+    private int bricksDestroyed;
+
+    public void SpawnBricks(int level)
+    {
+        ClearBricks();
+
+        totalBricksInLevel = 0;
+        bricksDestroyed = 0;
+
+        // Spawn rows based on level (1 new row per level, up to maxRows)
+        int rowsToSpawn = Mathf.Min(level, maxRows);
+
+        for (int row = 0; row < rowsToSpawn; row++)
+        {
+            SpawnBrickRow(row, level);
+        }
     }
 
-    void Update()
+    private void SpawnBrickRow(int rowIndex, int level)
     {
-        MoveBricksDown();
-
-        // Spawn new row when top-most row has moved down one step
-        if (activeBricks.Count > 0)
+        for (int col = 0; col < columns; col++)
         {
-            float highestY = activeBricks[activeBricks.Count - 1].transform.position.y;
-            if (highestY <= spawnY)
-                SpawnRow();
-        }
+            // Calculate position
+            float xPos = gridStartPosition.x + col * (brickWidth + spacing);
+            float yPos = gridStartPosition.y - rowIndex * (brickHeight + spacing);
 
-        // Check for Game Over
-        foreach (var brick in activeBricks)
-        {
-            if (brick.transform.position.y <= gameOverY)
+            Vector3 position = new Vector3(xPos, yPos, 0);
+
+            // Instantiate brick
+            GameObject brickObj = Instantiate(brickPrefab, position, Quaternion.identity, transform);
+            Brick brick = brickObj.GetComponent<Brick>();
+
+            if (brick != null)
             {
-                GameOver();
-                break;
+                brick.Initialize(rowIndex, col, level);
+
+                // Set color
+                SpriteRenderer sr = brick.GetComponent<SpriteRenderer>();
+                if (sr != null && brickColors.Length > 0)
+                {
+                    int colorIndex = rowIndex % brickColors.Length;
+                    sr.color = brickColors[colorIndex];
+                }
+
+                // Assign color array for health visualization
+                brick.healthColors = brickColors;
+
+                activeBricks.Add(brick);
+                totalBricksInLevel++;
             }
         }
     }
 
-    void SpawnRow()
+    public void OnBrickDestroyed(Brick brick)
     {
-        for (int i = 0; i < columns; i++)
+        activeBricks.Remove(brick);
+        bricksDestroyed++;
+
+        // Check if level complete
+        if (activeBricks.Count == 0)
         {
-            Vector3 pos = new Vector3(-3.5f + i, spawnY, 0);
-            var b = Instantiate(brickPrefab, pos, Quaternion.identity, transform);
-            activeBricks.Add(b);
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.LevelComplete();
+            }
         }
     }
 
-    void MoveBricksDown()
+    public void MoveBricksDown()
     {
-        for (int i = 0; i < activeBricks.Count; i++)
+        foreach (Brick brick in activeBricks)
         {
-            activeBricks[i].transform.Translate(Vector2.down * moveSpeed * Time.deltaTime);
+            brick.MoveDown(rowMoveDistance);
+        }
+
+        // Check if bricks reached bottom
+        if (GetLowestBrickRow() <= 0)
+        {
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.GameOver();
+            }
         }
     }
 
-    void GameOver()
+    public void MoveBricksUp()
     {
-        Time.timeScale = 0;
-        // TODO: trigger your “Watch Ad to Continue” UI here
+        // Used when player watches rewarded ad
+        foreach (Brick brick in activeBricks)
+        {
+            brick.MoveUp(rowMoveDistance);
+        }
+    }
+
+    public int GetLowestBrickRow()
+    {
+        int lowestRow = int.MaxValue;
+
+        foreach (Brick brick in activeBricks)
+        {
+            if (brick.GetRow() < lowestRow)
+            {
+                lowestRow = brick.GetRow();
+            }
+        }
+
+        return lowestRow == int.MaxValue ? 0 : lowestRow;
+    }
+
+    private void ClearBricks()
+    {
+        foreach (Brick brick in activeBricks)
+        {
+            if (brick != null)
+            {
+                Destroy(brick.gameObject);
+            }
+        }
+
+        activeBricks.Clear();
+    }
+
+    public int GetActiveBrickCount()
+    {
+        return activeBricks.Count;
     }
 }
